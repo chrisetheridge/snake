@@ -1,6 +1,6 @@
 # snake
 
-<img src="resources/cobra.png" style="width: 250px"/>
+<img src="resources/cobra.png" style="width: 200px"/>
 
 
 
@@ -46,4 +46,3 @@ Take a look at the `LICENSE` file in the root of this repository.
 ## Credits
 
 Snake icon by: [freepik](http://www.flaticon.com/authors/freepik)
-
