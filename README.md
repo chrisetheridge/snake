@@ -40,3 +40,10 @@ More instructions to be written.
 ## License
 
 Take a look at the `LICENSE` file in the root of this repository.
+
+
+
+## Credits
+
+Snake icon by: [freepik](http://www.flaticon.com/authors/freepik)
+
