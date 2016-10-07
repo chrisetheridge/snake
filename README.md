@@ -1,5 +1,9 @@
 # snake
 
+<img src="resources/cobra.png" style="width: 250px"/>
+
+
+
 A simple library to access Amazon S3 from Clojure.
 
 
