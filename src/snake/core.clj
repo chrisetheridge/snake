@@ -11,8 +11,9 @@
     CannedAccessControlList AmazonS3Exception ListObjectsRequest]))
 
 
-(def *s3-creds {:access-key nil
-                :secret-key nil})
+(def *s3-creds
+  (atom {:access-key nil
+         :secret-key nil}))
 
 
 (defn setup!
