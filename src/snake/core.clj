@@ -61,7 +61,7 @@
        (.getObjectSummaries object-listing)))
 
 
-(defn object-listing->map [listing]
+(defn- object-listing->map [listing]
   {:bucket          (.getBucketName listing)
    :objects         (object-summary->map listing)
    :prefix          (.getPrefix listing)
@@ -72,17 +72,32 @@
    :next-marker     (.getNextMarker listing)})
 
 
-(defn list-objects [bucket {:keys [delimeter prefix] :as opts}]
+(defn list-objects
+  "Lists objects in the bucket.
+
+   Optionally takes in a map containing list options.
+
+   :bucket    = name of the bucket to list
+   :delimeter = path delimter for the bucket
+   :prefix    = prefix of the file. e.g. \"foo\" would expand to
+                my-bucket/foo/bar.bz"
+  [bucket {prefix :prefix delimeter :delimeter
+           :or    {:prefix    ""
+                   :delimeter "/"}}]
   (let [req (doto (ListObjectsRequest.)
               (.setBucketName bucket)
               (.setDelimiter delimeter)
               (.setPrefix prefix))]
-    (log/info "s3/list-objects " {:bucket bucket :opts opts})
     (-> (.listObjects (s3-client) req)
         (object-listing->map))))
 
 
-(defn object-exists? [bucket key]
+(defn object-exists?
+  "Returns whether an object exists in the bucket or not.
+
+   :bucket = name of bucket to check
+   :key    = object to find"
+  [bucket key]
   (try
     (.getObjectMetadata (s3-client) bucket key)
     true
@@ -90,7 +105,7 @@
       false)))
 
 
-(defn inc-key [key]
+(defn- inc-key [key]
   (let [m (re-matches #"^(.*?-?)(\d+)?(\..+)$" key)]
     (str (second m)
          (if-let [num (nth m 2)]
@@ -100,12 +115,21 @@
 
 
 (defn unique-key [bucket key]
+  "Returns a unqiue variant of the key supplied, for a bucket.
+
+   :bucket = name of bucket to use
+   :key    = unique varient of the key to return
+
+   Example:
+
+   (unique-key \"foo\") => foo ; foo did not exist
+   (unique-key \"foo\") => foo-1 ; foo exists"
   (if (object-exists? bucket key)
     (unique-key bucket (inc-key key))
     key))
 
 
-(defn filename->content-type [key]
+(defn- filename->content-type [key]
   (case (->> key string/lower-case (re-matches #".*\.(.+)$") last)
     "woff"  "application/font-woff"
     "woff2" "application/font-woff2"
@@ -138,7 +162,18 @@
   (->put-value [x] (ByteArrayInputStream. x)))
 
 
-(defn put-object [bucket key content-type file]
+(defn put-object
+  "Puts an object into a bucket.
+
+   :bucket       = desitnation bucket for the object
+   :key          = key for the resulting object
+   :content-type = content type of the resulting file
+   :file         = the file to put
+
+   java.io.InputStream, java.io.File, and String is supported as files.
+
+   For supported content types, look at `filename->content-type`."
+  [bucket key content-type file]
   (let [input   (->put-value file)
         meta    (doto (ObjectMetadata.)
                   (.setCacheControl (str "public, max-age " (* 60 60 24 31)))
