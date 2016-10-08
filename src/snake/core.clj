@@ -31,11 +31,19 @@
 (defn s3-client
   "Returns the current AWS S3 client."
   []
-  (if (and (:access-key @*s3-creds)
-           (:secret-key @*s3-creds))
-    (AmazonS3Client. (BasicAWSCredentials. (:access-key @*s3-creds) (:secret-key @*s3-creds)))
-    (AmazonS3Client. (InstanceProfileCredentialsProvider. true))))
+  (cond
+    (and (:access-key @*s3-creds)
+         (:secret-key @*s3-creds))
+    (AmazonS3Client. (BasicAWSCredentials. (:access-key @*s3-creds)
+                                           (:secret-key @*s3-creds)))
 
+    (and (System/getenv "ENV_CONFIG_S3_ACCESS_KEY")
+         (System/getenv "ENV_CONFIG_S3_SECRET_KEY"))
+    (AmazonS3Client. (BasicAWSCredentials. (System/getenv "ENV_CONFIG_S3_ACCESS_KEY")
+                                           (System/getenv "ENV_CONFIG_S3_SECRET_KEY")))
+
+    :else
+    (AmazonS3Client. (InstanceProfileCredentialsProvider. true))))
 
 (defn copy-object
   "Copies an object from `source bucket` to `destination bucket`.
@@ -171,7 +179,7 @@
    content-type = content type of the resulting file
    file         = the file to put
 
-   `java.io.InputStream`, `java.io.File`, and `String` is supported as files.
+   `java.io.InputStream`, `java.io.File`, and `String` is supported as values.
 
    For supported content types, look at `filename->content-type`."
   [bucket key content-type file]
