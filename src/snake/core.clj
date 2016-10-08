@@ -19,8 +19,8 @@
   "Sets up the S3 credentials map. This *must* be used if you are
    not going to be using AWS instance profiles.
 
-   :access-key = S3 Access Key
-   :secret-key = S3 Secret key"
+   access-key = S3 Access Key
+   secret-key = S3 Secret key"
   [^String access-key ^String secret-key]
   (reset! *s3-creds{:access-key access-key
                     :secret-key secret-key})
@@ -39,12 +39,12 @@
 (defn copy-object
   "Copies an object from `source bucket` to `destination bucket`.
 
-  If only supplied 1 bucket, the object will be copied to that bucket.
+   If only supplied 1 bucket, the object will be copied to that bucket.
 
-  :src-bucket  = name of the source bucket
-  :src-key     = key of the source object
-  :dest-bucket = name of the destination bucket
-  :dest-key    = key of the destination object"
+   src-bucket  = name of the source bucket
+   src-key     = key of the source object
+   dest-bucket = name of the destination bucket
+   dest-key    = key of the destination object"
   ([bucket src-key dest-key]
    (copy-object bucket src-key bucket dest-key))
   ([src-bucket src-key dest-bucket dest-key]
@@ -77,7 +77,7 @@
 
    Optionally takes in a map containing list options.
 
-   :bucket    = name of the bucket to list
+   bucket    = name of the bucket to list
    :delimeter = path delimter for the bucket
    :prefix    = prefix of the file. e.g. \"foo\" would expand to
                 my-bucket/foo/bar.bz"
@@ -95,8 +95,8 @@
 (defn object-exists?
   "Returns whether an object exists in the bucket or not.
 
-   :bucket = name of bucket to check
-   :key    = object to find"
+   bucket = name of bucket to check
+   key    = object to find"
   [bucket key]
   (try
     (.getObjectMetadata (s3-client) bucket key)
@@ -117,8 +117,8 @@
 (defn unique-key [bucket key]
   "Returns a unqiue variant of the key supplied, for a bucket.
 
-   :bucket = name of bucket to use
-   :key    = unique varient of the key to return
+   bucket = name of bucket to use
+   key    = unique varient of the key to return
 
    Example:
 
@@ -147,7 +147,7 @@
 
 
 (defprotocol PutValueType
-  "Converts `x` to a value type."
+  "Converts `x` to a value type appropriate to `put` into a bucket.."
   (->put-value [x]))
 
 
@@ -165,12 +165,12 @@
 (defn put-object
   "Puts an object into a bucket.
 
-   :bucket       = desitnation bucket for the object
-   :key          = key for the resulting object
-   :content-type = content type of the resulting file
-   :file         = the file to put
+   bucket       = desitnation bucket for the object
+   key          = key for the resulting object
+   content-type = content type of the resulting file
+   file         = the file to put
 
-   java.io.InputStream, java.io.File, and String is supported as files.
+   `java.io.InputStream`, `java.io.File`, and `String` is supported as files.
 
    For supported content types, look at `filename->content-type`."
   [bucket key content-type file]
