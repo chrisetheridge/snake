@@ -1,4 +1,4 @@
-(ns cognician.server.s3
+(ns snake.core
   (:require
    [clojure.string :as string])
   (:import
