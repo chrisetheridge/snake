@@ -1,9 +1,5 @@
 # snake
 
-<img src="resources/cobra.png" style="width: 200px"/>
-
-
-
 A simple library to access Amazon S3 from Clojure.
 
 
@@ -33,16 +29,11 @@ Where, `"X.X.X"` is the current version.
 
 
 
-More instructions to be written.
+## Todo
 
+Write better usage docs.
 
 
 ## License
 
 Take a look at the `LICENSE` file in the root of this repository.
-
-
-
-## Credits
-
-Snake icon by: [freepik](http://www.flaticon.com/authors/freepik)
