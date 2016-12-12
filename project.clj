@@ -9,5 +9,14 @@
 
   :min-lein-version "2.6.1"
 
+  :release-tasks [["vcs" "assert-committed"]
+                  ["change" "version" "leiningen.release/bump-version" "release"]
+                  ["vcs" "commit" "--no-sign"]
+                  ["vcs" "tag" "--no-sign"]
+                  ["deploy"]
+                  ["change" "version" "leiningen.release/bump-version"]
+                  ["vcs" "commit" "--no-sign"]
+                  ["vcs" "push" "--no-sign"]]
+
   :dependencies [[org.clojure/clojure "1.8.0"]
                  [com.amazonaws/aws-java-sdk-s3 "1.9.39" :exclusions [joda-time]]])
