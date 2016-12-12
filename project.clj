@@ -11,12 +11,12 @@
 
   :release-tasks [["vcs" "assert-committed"]
                   ["change" "version" "leiningen.release/bump-version" "release"]
-                  ["vcs" "commit" "--no-sign"]
+                  ["vcs" "commit"]
                   ["vcs" "tag" "--no-sign"]
                   ["deploy"]
                   ["change" "version" "leiningen.release/bump-version"]
-                  ["vcs" "commit" "--no-sign"]
-                  ["vcs" "push" "--no-sign"]]
+                  ["vcs" "commit"]
+                  ["vcs" "push"]]
 
   :dependencies [[org.clojure/clojure "1.8.0"]
                  [com.amazonaws/aws-java-sdk-s3 "1.9.39" :exclusions [joda-time]]])
