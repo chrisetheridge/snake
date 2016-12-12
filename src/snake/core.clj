@@ -158,7 +158,7 @@
   InputStream
   (->put-value [x] x)
 
-  ByteArrayOutputStream
+  ByteArray
   (->put-value [x] (ByteArrayInputStream. x))
 
   File
