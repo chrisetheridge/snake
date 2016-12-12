@@ -144,7 +144,9 @@
     "txt"   "text/css"
     nil))
 
-(defn generate-metadata [filename data]
+(defn generate-metadata
+  "Generates a metadata map, given the filename and data."
+  [filename data]
   {:content-type   (filename->content-type filename)
    :content-length (count data)})
 
