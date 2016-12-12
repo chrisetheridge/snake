@@ -128,7 +128,7 @@
     (unique-key bucket (inc-key key))
     key))
 
-(defn- filename->content-type [key]
+(defn filename->content-type [key]
   (case (->> key string/lower-case (re-matches #".*\.(.+)$") last)
     "woff"  "application/font-woff"
     "woff2" "application/font-woff2"
