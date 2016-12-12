@@ -10,11 +10,9 @@
    [com.amazonaws.services.s3.model ObjectMetadata S3Object PutObjectRequest
     CannedAccessControlList AmazonS3Exception ListObjectsRequest]))
 
-
 (def *s3-creds
   (atom {:access-key nil
          :secret-key nil}))
-
 
 (defn setup!
   "Sets up the S3 credentials map. This *must* be used if you are
@@ -26,7 +24,6 @@
   (reset! *s3-creds{:access-key access-key
                     :secret-key secret-key})
   @*s3-creds)
-
 
 (defn s3-client
   "Returns the current AWS S3 client."
@@ -59,7 +56,6 @@
   ([src-bucket src-key dest-bucket dest-key]
    (.copyObject (s3-client) src-bucket src-key dest-bucket dest-key)))
 
-
 (defn- object-summary->map [object-listing]
   (map (fn [summary]
          {:metadata {:content-length (.getSize summary)
@@ -68,7 +64,6 @@
           :bucket   (.getBucketName summary)
           :key      (.getKey summary)})
        (.getObjectSummaries object-listing)))
-
 
 (defn- object-listing->map [listing]
   {:bucket          (.getBucketName listing)
@@ -79,7 +74,6 @@
    :max-keys        (.getMaxKeys listing)
    :marker          (.getMarker listing)
    :next-marker     (.getNextMarker listing)})
-
 
 (defn list-objects
   "Lists objects in the bucket.
@@ -100,7 +94,6 @@
     (-> (.listObjects (s3-client) req)
         (object-listing->map))))
 
-
 (defn object-exists?
   "Returns whether an object exists in the bucket or not.
 
@@ -113,7 +106,6 @@
     (catch Exception e
       false)))
 
-
 (defn- inc-key [key]
   (let [m (re-matches #"^(.*?-?)(\d+)?(\..+)$" key)]
     (str (second m)
@@ -121,7 +113,6 @@
            (-> num Integer. inc)
            "-1")
          (last m))))
-
 
 (defn unique-key [bucket key]
   "Returns a unqiue variant of the key supplied, for a bucket.
@@ -136,7 +127,6 @@
   (if (object-exists? bucket key)
     (unique-key bucket (inc-key key))
     key))
-
 
 (defn- filename->content-type [key]
   (case (->> key string/lower-case (re-matches #".*\.(.+)$") last)
@@ -154,7 +144,6 @@
     "txt"   "text/css"
     nil))
 
-
 (defprotocol PutValueType
   "Converts `x` to a value type appropriate to `put` into a bucket.."
   (->put-value [x]))
@@ -169,7 +158,6 @@
 
   String
   (->put-value [x] (ByteArrayInputStream. x)))
-
 
 (defn put-object
   "Puts an object into a bucket.
