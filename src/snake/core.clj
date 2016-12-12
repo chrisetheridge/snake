@@ -2,7 +2,7 @@
   (:require
    [clojure.string :as string])
   (:import
-   [java.io ByteArrayInputStream]
+   [java.io ByteArrayInputStream ByteArrayOutputStream]
    [com.amazonaws.auth BasicAWSCredentials InstanceProfileCredentialsProvider]
    [com.amazonaws.services.s3 AmazonS3Client]
    [java.io File InputStream FileInputStream FileOutputStream
