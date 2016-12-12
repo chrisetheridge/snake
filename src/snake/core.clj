@@ -179,3 +179,11 @@
         request (PutObjectRequest. bucket key input meta)]
     (.setCannedAcl request CannedAccessControlList/PublicRead)
     (.putObject (s3-client) request)))
+
+(defn url-for-bucket-and-key
+  "Returns the URL for the given S3 bucket and key.
+
+  bucket = bucket with the object
+  key    = object"
+  [bucket key]
+  (str "https://" bucket ".s3.amazonaws.com/" key))
