@@ -151,13 +151,15 @@
    :content-length (count data)})
 
 (defprotocol PutValueType
-  "Converts `x` to a value type appropriate to `put` into a bucket.."
+  "Converts `x` to a value type appropriate to `put` into a bucket."
   (->put-value [x]))
-
 
 (extend-protocol PutValueType
   InputStream
   (->put-value [x] x)
+
+  ByteArrayOutputStream
+  (->put-value [x] (ByteArrayInputStream. x))
 
   File
   (->put-value [x] (FileInputStream. x))
