@@ -144,6 +144,10 @@
     "txt"   "text/css"
     nil))
 
+(defn generate-metadata [filename data]
+  {:content-type   (filename->content-type filename)
+   :content-length (count data)})
+
 (defprotocol PutValueType
   "Converts `x` to a value type appropriate to `put` into a bucket.."
   (->put-value [x]))
