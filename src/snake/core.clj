@@ -1,14 +1,9 @@
 (ns snake.core
-  (:require
-   [clojure.string :as string])
-  (:import
-   [java.io ByteArrayInputStream ByteArrayOutputStream
-    File InputStream FileInputStream FileOutputStream
-    Writer OutputStreamWriter]
-   [com.amazonaws.auth BasicAWSCredentials InstanceProfileCredentialsProvider]
-   [com.amazonaws.services.s3 AmazonS3Client]
-   [com.amazonaws.services.s3.model ObjectMetadata S3Object PutObjectRequest
-    CannedAccessControlList AmazonS3Exception ListObjectsRequest]))
+  (:require [clojure.string :as string])
+  (:import [com.amazonaws.auth BasicAWSCredentials InstanceProfileCredentialsProvider]
+           com.amazonaws.services.s3.AmazonS3Client
+           [com.amazonaws.services.s3.model CannedAccessControlList ListObjectsRequest ObjectMetadata PutObjectRequest]
+           [java.io ByteArrayInputStream File FileInputStream InputStream]))
 
 (def *s3-creds
   (atom {:access-key nil
