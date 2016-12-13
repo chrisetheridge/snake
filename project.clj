@@ -1,4 +1,4 @@
-(defproject snake "0.3.5"
+(defproject snake "0.3.6"
 
   :description "Snake: S3 interop for Clojure."
 

@@ -2,11 +2,11 @@
   (:require
    [clojure.string :as string])
   (:import
-   [java.io ByteArrayInputStream ByteArrayOutputStream]
+   [java.io ByteArrayInputStream ByteArrayOutputStream
+    File InputStream FileInputStream FileOutputStream
+    Writer OutputStreamWriter]
    [com.amazonaws.auth BasicAWSCredentials InstanceProfileCredentialsProvider]
    [com.amazonaws.services.s3 AmazonS3Client]
-   [java.io File InputStream FileInputStream FileOutputStream
-    Writer OutputStreamWriter]
    [com.amazonaws.services.s3.model ObjectMetadata S3Object PutObjectRequest
     CannedAccessControlList AmazonS3Exception ListObjectsRequest]))
 
@@ -157,9 +157,6 @@
 (extend-protocol PutValueType
   InputStream
   (->put-value [x] x)
-
-  ByteArray
-  (->put-value [x] (ByteArrayInputStream. x))
 
   File
   (->put-value [x] (FileInputStream. x))
