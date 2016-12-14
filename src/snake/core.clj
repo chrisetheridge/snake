@@ -28,14 +28,7 @@
          (:secret-key @*s3-creds))
     (AmazonS3Client. (BasicAWSCredentials. (:access-key @*s3-creds)
                                            (:secret-key @*s3-creds)))
-
-    (and (System/getenv "ENV_CONFIG_S3_ACCESS_KEY")
-         (System/getenv "ENV_CONFIG_S3_SECRET_KEY"))
-    (AmazonS3Client. (BasicAWSCredentials. (System/getenv "ENV_CONFIG_S3_ACCESS_KEY")
-                                           (System/getenv "ENV_CONFIG_S3_SECRET_KEY")))
-
-    :else
-    (AmazonS3Client. (InstanceProfileCredentialsProvider. true))))
+    :else (AmazonS3Client. (InstanceProfileCredentialsProvider. true))))
 
 (defn copy-object
   "Copies an object from `source bucket` to `destination bucket`.
