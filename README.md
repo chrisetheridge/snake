@@ -1,5 +1,7 @@
 # snake
 
+[![Clojars Project](https://img.shields.io/clojars/v/snake.svg)](https://clojars.org/snake)
+
 A simple library to access Amazon S3 from Clojure.
 
 
@@ -11,7 +13,6 @@ A simple library to access Amazon S3 from Clojure.
 - Create / list / delete buckets.
 - Create / list / delete objects.
 - More in the future.
-
 
 
 ## Usage
