@@ -30,7 +30,7 @@
                                            (:secret-key @*s3-creds)))
     :else (AmazonS3Client. (InstanceProfileCredentialsProvider. true))))
 
-(defn copy-object
+(defn copy
   "Copies an object from `source bucket` to `destination bucket`.
 
    If only supplied 1 bucket, the object will be copied to that bucket.
