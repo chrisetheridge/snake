@@ -40,7 +40,7 @@
    dest-bucket = name of the destination bucket
    dest-key    = key of the destination object"
   ([bucket src-key dest-key]
-   (copy-object bucket src-key bucket dest-key))
+   (copy bucket src-key bucket dest-key))
   ([src-bucket src-key dest-bucket dest-key]
    (.copyObject (s3-client) src-bucket src-key dest-bucket dest-key)))
 
@@ -198,3 +198,19 @@
   key    = object"
   [bucket key]
   (str "https://" bucket ".s3.amazonaws.com/" key))
+
+;; Deprecated functions.
+
+(defn ^:deprecated copy-object
+  "Copies an object from `source bucket` to `destination bucket`.
+
+   If only supplied 1 bucket, the object will be copied to that bucket.
+
+   src-bucket  = name of the source bucket
+   src-key     = key of the source object
+   dest-bucket = name of the destination bucket
+   dest-key    = key of the destination object"
+  ([bucket src-key dest-key]
+   (copy-object bucket src-key bucket dest-key))
+  ([src-bucket src-key dest-bucket dest-key]
+   (.copyObject (s3-client) src-bucket src-key dest-bucket dest-key)))
