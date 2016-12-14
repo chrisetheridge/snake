@@ -16,8 +16,8 @@
    access-key = S3 Access Key
    secret-key = S3 Secret key"
   [^String access-key ^String secret-key]
-  (reset! *s3-creds{:access-key access-key
-                    :secret-key secret-key})
+  (reset! *s3-creds {:access-key access-key
+                     :secret-key secret-key})
   @*s3-creds)
 
 (defn s3-client
@@ -172,6 +172,24 @@
         request (PutObjectRequest. bucket key input meta)]
     (.setCannedAcl request CannedAccessControlList/PublicRead)
     (.putObject (s3-client) request)))
+
+(defn upload!
+  "Uploads a given file, with given filename, to the given bucket.
+
+   bucket   = destination bucket for the object
+   filename = name of the resulting file
+   file     = actual file to upload
+
+   optional - overwrite? = whether or not to overwrite, in the instance
+   of the file already existing. Defaults to `false`.
+
+   Returns the resulting filename."
+  ([bucket filename file] (upload! bucket filename key false))
+  ([bucket filename file overwrite?]
+   (let [content-type (filename->content-type filename)
+         filename     (and overwrite? (unique-key bucket filename))]
+     (put-object bucket filename content-type file)
+     filename)))
 
 (defn url-for-bucket-and-key
   "Returns the URL for the given S3 bucket and key.
