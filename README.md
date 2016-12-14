@@ -25,6 +25,8 @@ Where, `"X.X.X"` is the current version.
 
 `snake`, by default, tries to use the **instance profiles** set in `~/.aws/credentials`. However, if you have setup snake already with `snake/setup!`, then `snake` will use these details instead.
 
+You can read more about instance profiles [here](http://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_use_switch-role-ec2_instance-profiles.html).
+
 ### Copying files
 
 Copy one object from a source bucket to a destination bucket. By default, if a second bucket is not given, then `snake` will just copy to the source bucket.
