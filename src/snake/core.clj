@@ -160,7 +160,7 @@
   (->put-value [x] (FileInputStream. x))
 
   String
-  (->put-value [x] (ByteArrayInputStream. x)))
+  (->put-value [x] (ByteArrayInputStream. (.getBytes x))))
 
 (defn put-object
   "Puts an object into a bucket.
