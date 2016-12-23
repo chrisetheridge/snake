@@ -208,12 +208,11 @@
    of the file already existing. Defaults to `false`.
 
    Returns the resulting filename."
-  ([bucket filename file] (upload! bucket filename file false))
-  ([bucket filename file overwrite?]
-   (let [content-type (filename->content-type filename)
-         filename     (and overwrite? (unique-key bucket filename))]
-     (put-object bucket filename content-type file)
-     filename)))
+  [bucket filename file]
+  (let [content-type (filename->content-type filename)
+        filename     (unique-key bucket filename)]
+    (put-object bucket filename content-type file)
+    filename))
 
 (defn download-folder
   "Download `local-path` to local disk.
