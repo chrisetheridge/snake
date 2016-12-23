@@ -1,8 +1,8 @@
 (ns snake.core
-  (:require [clojure.string :as string]
-            [clojure.java.io :as io])
+  (:require [clojure.java.io :as io]
+            [clojure.string :as string])
   (:import [com.amazonaws.auth BasicAWSCredentials InstanceProfileCredentialsProvider]
-           [com.amazonaws.services.s3.AmazonS3Client]
+           com.amazonaws.services.s3.AmazonS3Client
            [com.amazonaws.services.s3.model CannedAccessControlList ListObjectsRequest ObjectMetadata PutObjectRequest]
            [java.io ByteArrayInputStream File FileInputStream InputStream]))
 
