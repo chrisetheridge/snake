@@ -173,14 +173,27 @@
     (.setCannedAcl request CannedAccessControlList/PublicRead)
     (.putObject (s3-client) request)))
 
+(defn get-object [bucket key]
+  "Gets an object by bucket and key.
+
+   Required args:
+   bucket = bucket the key is in.
+   key    = the key of the object."
+  (-> (s3-client)
+      (.getObject bucket key)
+      (.getObjectContent)
+      (slurp)))
+
 (defn upload!
   "Uploads a given file, with given filename, to the given bucket.
 
+   Required args:
    bucket   = destination bucket for the object
    filename = name of the resulting file
    file     = actual file to upload
 
-   optional - overwrite? = whether or not to overwrite, in the instance
+   Optional args:
+   overwrite? = whether or not to overwrite, in the instance
    of the file already existing. Defaults to `false`.
 
    Returns the resulting filename."
@@ -191,11 +204,26 @@
      (put-object bucket filename content-type file)
      filename)))
 
+(defn download-folder
+  "Download `local-dest` to local disk.
+   Prefix specifies prefix the bucket to list. e.g. \"foo\" would expand
+   my-bucket/foo/"
+  [bucket local-dest prefix]
+  (doseq [{path                  :key
+           {len :content-length} :metadata} (:objects (list-objects bucket {:prefix prefix}))
+          :when                             (pos? len)
+          :let                              [dest (str local-dest "/" path)]]
+    (io/make-parents dest)
+    (with-open [raw-stream (:content (get-object bucket path))
+                in         (io/input-stream raw-stream)]
+      (io/copy in (io/file dest)))))
+
 (defn url-for-bucket-and-key
   "Returns the URL for the given S3 bucket and key.
 
-  bucket = bucket with the object
-  key    = object"
+   Required args:
+   bucket = bucket with the object
+   key    = object key / name"
   [bucket key]
   (str "https://" bucket ".s3.amazonaws.com/" key))
 
