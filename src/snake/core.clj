@@ -16,7 +16,7 @@
 
    access-key = S3 Access Key
    secret-key = S3 Secret key"
-  [^String access-key ^String secret-key]
+  [access-key secret-key]
   (reset! *s3-creds {:access-key access-key
                      :secret-key secret-key})
   @*s3-creds)
@@ -41,9 +41,9 @@
    src-key     = key of the source object
    dest-bucket = name of the destination bucket
    dest-key    = key of the destination object"
-  ([^String bucket ^String src-key ^String dest-key]
+  ([bucket src-key dest-key]
    (copy bucket src-key bucket dest-key))
-  ([^String src-bucket ^String src-key ^String dest-bucket ^String dest-key]
+  ([src-bucket src-key dest-bucket dest-key]
    (.copyObject (s3-client) src-bucket src-key dest-bucket dest-key)))
 
 (defn- object-summary->map [^ListObjectsRequest object-listing]
@@ -75,9 +75,9 @@
    :delimeter = path delimter for the bucket
    :prefix    = prefix of the file. e.g. \"foo\" would expand to
                 my-bucket/foo/bar.bz"
-  [^String bucket {prefix :prefix delimeter :delimeter
-                   :or    {:prefix    ""
-                           :delimeter "/"}}]
+  [bucket {prefix :prefix delimeter :delimeter
+           :or    {:prefix    ""
+                   :delimeter "/"}}]
   (let [req (doto (ListObjectsRequest.)
               (.setBucketName bucket)
               (.setDelimiter delimeter)
@@ -91,14 +91,14 @@
    Required args:
    bucket = name of bucket to check
    key    = object to find"
-  [^String bucket ^String key]
+  [bucket key]
   (try
     (.getObjectMetadata (s3-client) bucket key)
     true
     (catch Exception e
       false)))
 
-(defn- inc-key [^String key]
+(defn- inc-key [key]
   (let [m (re-matches #"^(.*?-?)(\d+)?(\..+)$" key)]
     (str (second m)
          (if-let [num (nth m 2)]
@@ -106,7 +106,7 @@
            "-1")
          (last m))))
 
-(defn unique-key [^String bucket ^String key]
+(defn unique-key [bucket key]
   "Returns a unqiue variant of the key supplied, for a bucket.
 
    Required args:
@@ -121,7 +121,7 @@
     (unique-key bucket (inc-key key))
     key))
 
-(defn filename->content-type [^String key]
+(defn filename->content-type [key]
   "Returns the content-type from the filename. Only infers the filename based
    on the extension.
 
@@ -144,7 +144,7 @@
 
 (defn generate-metadata
   "Generates a metadata map, given the filename and data."
-  [^String filename data]
+  [filename data]
   {:content-type   (filename->content-type filename)
    :content-length (count data)})
 
@@ -174,7 +174,7 @@
    `java.io.InputStream`, `java.io.File`, and `String` is supported as values.
 
    For supported content types, look at `filename->content-type`."
-  [^String bucket ^String key ^String content-type file]
+  [bucket key content-type file]
   (let [input   (->put-value file)
         meta    (doto (ObjectMetadata.)
                   (.setCacheControl (str "public, max-age " (* 60 60 24 31)))
@@ -184,7 +184,7 @@
     (.setCannedAcl request CannedAccessControlList/PublicRead)
     (.putObject (s3-client) request)))
 
-(defn get-object [^String bucket ^String key]
+(defn get-object [bucket key]
   "Gets an object by bucket and key.
 
    Required args:
@@ -208,8 +208,8 @@
    of the file already existing. Defaults to `false`.
 
    Returns the resulting filename."
-  ([^String bucket ^String filename ^String file] (upload! bucket filename key false))
-  ([^String bucket ^String filename ^String file overwrite?]
+  ([bucket filename file] (upload! bucket filename key false))
+  ([bucket filename file overwrite?]
    (let [content-type (filename->content-type filename)
          filename     (and overwrite? (unique-key bucket filename))]
      (put-object bucket filename content-type file)
@@ -219,7 +219,7 @@
   "Download `local-path` to local disk.
    Prefix specifies prefix the bucket to list. e.g. \"foo\" would expand
    my-bucket/foo/"
-  [^String bucket ^String local-path ^String prefix]
+  [bucket local-path prefix]
   (doseq [{path                  :key
            {len :content-length} :metadata} (:objects (list-objects bucket {:prefix prefix}))
           :when                             (pos? len)
@@ -235,7 +235,7 @@
    Required args:
    bucket = bucket with the object
    key    = object key / name"
-  [^String bucket ^String key]
+  [bucket key]
   (str "https://" bucket ".s3.amazonaws.com/" key))
 
 ;; Deprecated functions.
@@ -250,7 +250,7 @@
    src-key     = key of the source object
    dest-bucket = name of the destination bucket
    dest-key    = key of the destination object"
-  ([^String bucket ^String src-key ^String dest-key]
+  ([bucket src-key dest-key]
    (copy-object bucket src-key bucket dest-key))
-  ([^String src-bucket ^String src-key ^String dest-bucket ^String dest-key]
+  ([src-bucket src-key dest-bucket dest-key]
    (.copyObject (s3-client) src-bucket src-key dest-bucket dest-key)))
