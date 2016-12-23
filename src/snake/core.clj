@@ -208,7 +208,7 @@
    of the file already existing. Defaults to `false`.
 
    Returns the resulting filename."
-  ([bucket filename file] (upload! bucket filename key false))
+  ([bucket filename file] (upload! bucket filename file false))
   ([bucket filename file overwrite?]
    (let [content-type (filename->content-type filename)
          filename     (and overwrite? (unique-key bucket filename))]
