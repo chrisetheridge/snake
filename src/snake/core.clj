@@ -35,6 +35,7 @@
 
    If only supplied 1 bucket, the object will be copied to that bucket.
 
+   Required args:
    src-bucket  = name of the source bucket
    src-key     = key of the source object
    dest-bucket = name of the destination bucket
@@ -68,7 +69,8 @@
 
    Optionally takes in a map containing list options.
 
-   bucket    = name of the bucket to list
+   Required args:
+   bucket     = name of the bucket to list
    :delimeter = path delimter for the bucket
    :prefix    = prefix of the file. e.g. \"foo\" would expand to
                 my-bucket/foo/bar.bz"
@@ -85,6 +87,7 @@
 (defn object-exists?
   "Returns whether an object exists in the bucket or not.
 
+   Required args:
    bucket = name of bucket to check
    key    = object to find"
   [bucket key]
@@ -105,6 +108,7 @@
 (defn unique-key [bucket key]
   "Returns a unqiue variant of the key supplied, for a bucket.
 
+   Required args:
    bucket = name of bucket to use
    key    = unique varient of the key to return
 
@@ -117,6 +121,11 @@
     key))
 
 (defn filename->content-type [key]
+  "Returns the content-type from the filename. Only infers the filename based
+   on the extension.
+
+   Required args:
+   key = filename of the file."
   (case (->> key string/lower-case (re-matches #".*\.(.+)$") last)
     "woff"  "application/font-woff"
     "woff2" "application/font-woff2"
@@ -155,7 +164,8 @@
 (defn put-object
   "Puts an object into a bucket.
 
-   bucket       = desitnation bucket for the object
+   Required args:
+   bucket       = destination bucket for the object
    key          = key for the resulting object
    content-type = content type of the resulting file
    file         = the file to put
@@ -232,8 +242,9 @@
 (defn ^:deprecated copy-object
   "Copies an object from `source bucket` to `destination bucket`.
 
-   If only supplied 1 bucket, the object will be copied to that bucket.
+   If only supplied 1 bucket, the object will be copied to that
 
+   Required args:
    src-bucket  = name of the source bucket
    src-key     = key of the source object
    dest-bucket = name of the destination bucket
