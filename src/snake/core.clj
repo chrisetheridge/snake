@@ -208,9 +208,11 @@
    of the file already existing. Defaults to `false`.
 
    Returns the resulting filename."
-  [bucket filename file]
+  [bucket filename file & {:as options}]
   (let [content-type (filename->content-type filename)
-        filename     (unique-key bucket filename)]
+        filename     (if (and options (:overwrite? options))
+                       filename
+                       (unique-key bucket filename))]
     (put-object bucket filename content-type file)
     filename))
 
