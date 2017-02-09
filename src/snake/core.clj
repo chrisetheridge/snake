@@ -135,6 +135,7 @@
     "svg"   "image/svg+xml"
     "css"   "text/css"
     "jpg"   "image/jpeg"
+    "html"  "text/html"
     "jpe"   "image/jpeg"
     "jpeg"  "image/jpeg"
     "png"   "image/png"
