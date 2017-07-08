@@ -226,7 +226,7 @@
           :when                             (pos? len)
           :let                              [dest (str local-path "/" path)]]
     (io/make-parents dest)
-    (with-open [raw-stream (:content (get-object bucket path))
+    (with-open [raw-stream (:content (get-object bucket path)) ;; TODO
                 in         (io/input-stream raw-stream)]
       (io/copy in (io/file dest)))))
 
