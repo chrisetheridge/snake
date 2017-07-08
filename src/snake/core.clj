@@ -3,7 +3,7 @@
             [clojure.string :as string])
   (:import [com.amazonaws.auth BasicAWSCredentials InstanceProfileCredentialsProvider]
            com.amazonaws.services.s3.AmazonS3Client
-           [com.amazonaws.services.s3.model CannedAccessControlList ListObjectsRequest ObjectMetadata PutObjectRequest]
+           [com.amazonaws.services.s3.model CannedAccessControlList ListObjectsRequest ObjectListing ObjectMetadata PutObjectRequest S3Object S3ObjectSummary]
            [java.io ByteArrayInputStream File FileInputStream InputStream]))
 
 (def *s3-creds
@@ -44,10 +44,10 @@
   ([bucket src-key dest-key]
    (copy bucket src-key bucket dest-key))
   ([src-bucket src-key dest-bucket dest-key]
-   (.copyObject (s3-client) src-bucket src-key dest-bucket dest-key)))
+   (.copyObject ^AmazonS3Client (s3-client) src-bucket src-key dest-bucket dest-key)))
 
-(defn- object-summary->map [^ListObjectsRequest object-listing]
-  (map (fn [summary]
+(defn- object-summary->map [^ObjectListing object-listing]
+  (map (fn [^S3ObjectSummary summary]
          {:metadata {:content-length (.getSize summary)
                      :etag           (.getETag summary)
                      :last-modified  (.getLastModified summary)}
@@ -55,7 +55,7 @@
           :key      (.getKey summary)})
        (.getObjectSummaries object-listing)))
 
-(defn- object-listing->map [listing]
+(defn- object-listing->map [^ObjectListing listing]
   {:bucket          (.getBucketName listing)
    :objects         (object-summary->map listing)
    :prefix          (.getPrefix listing)
@@ -82,7 +82,7 @@
               (.setBucketName bucket)
               (.setDelimiter delimeter)
               (.setPrefix prefix))]
-    (-> (.listObjects (s3-client) req)
+    (-> (.listObjects ^AmazonS3Client (s3-client) req)
         (object-listing->map))))
 
 (defn object-exists?
@@ -93,21 +93,21 @@
    key    = object to find"
   [bucket key]
   (try
-    (.getObjectMetadata (s3-client) bucket key)
+    (.getObjectMetadata ^AmazonS3Client(s3-client) bucket key)
     true
     (catch Exception e
       false)))
 
 (defn- inc-key [key]
-  (let [m (re-matches #"^(.*?-?)(\d+)?(\..+)$" key)]
-    (str (second m)
-         (if-let [num (nth m 2)]
-           (-> num Integer. inc)
+  (let [[_ pre num post] (re-matches #"^(.*?-?)(\d+)?(\..+)$" key)]
+    (str pre
+         (if num
+           (inc (Integer/parseInt num))
            "-1")
-         (last m))))
+         post)))
 
 (defn unique-key [bucket key]
-  "Returns a unqiue variant of the key supplied, for a bucket.
+  "Returns a unique variant of the key supplied, for a bucket.
 
    Required args:
    bucket = name of bucket to use
@@ -180,10 +180,10 @@
         meta    (doto (ObjectMetadata.)
                   (.setCacheControl (str "public, max-age " (* 60 60 24 31)))
                   (.setContentType content-type)
-                  (.setContentLength (.available input)))
+                  (.setContentLength (.available ^InputStream input)))
         request (PutObjectRequest. bucket key input meta)]
     (.setCannedAcl request CannedAccessControlList/PublicRead)
-    (.putObject (s3-client) request)))
+    (.putObject ^AmazonS3Client (s3-client) request)))
 
 (defn get-object [bucket key]
   "Gets an object by bucket and key.
@@ -191,10 +191,9 @@
    Required args:
    bucket = bucket the key is in.
    key    = the key of the object."
-  (-> (s3-client)
-      (.getObject bucket key)
-      (.getObjectContent)
-      (slurp)))
+  (slurp (.getObjectContent ^S3Object (.getObject ^AmazonS3Client (s3-client)
+                                                  ^String bucket
+                                                  ^String key))))
 
 (defn upload!
   "Uploads a given file, with given filename, to the given bucket.
@@ -255,4 +254,4 @@
   ([bucket src-key dest-key]
    (copy-object bucket src-key bucket dest-key))
   ([src-bucket src-key dest-bucket dest-key]
-   (.copyObject (s3-client) src-bucket src-key dest-bucket dest-key)))
+   (.copyObject ^AmazonS3Client (s3-client) src-bucket src-key dest-bucket dest-key)))
