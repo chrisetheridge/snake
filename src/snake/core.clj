@@ -76,8 +76,8 @@
    :prefix    = prefix of the file. e.g. \"foo\" would expand to
                 my-bucket/foo/bar.bz"
   [bucket {prefix :prefix delimeter :delimeter
-           :or    {:prefix    ""
-                   :delimeter "/"}}]
+           :or    {prefix    ""
+                   delimeter "/"}}]
   (let [req (doto (ListObjectsRequest.)
               (.setBucketName bucket)
               (.setDelimiter delimeter)
