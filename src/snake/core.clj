@@ -196,6 +196,16 @@
       (.getObjectContent)
       (slurp)))
 
+(defn get-object-input-stream [bucket key]
+  "Gets an object's input stream by bucket and key.
+
+   Required args:
+   bucket = bucket the key is in.
+   key    = the key of the object."
+  (-> (s3-client)
+      (.getObject bucket key)
+      (.getObjectContent)))
+
 (defn upload!
   "Uploads a given file, with given filename, to the given bucket.
 
