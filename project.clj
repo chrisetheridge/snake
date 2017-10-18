@@ -1,4 +1,4 @@
-(defproject snake "0.6.8"
+(defproject snake "0.6.9"
 
   :description "Snake: S3 interop for Clojure."
 
@@ -19,4 +19,4 @@
                   ["vcs" "push"]]
 
   :dependencies [[org.clojure/clojure "1.8.0"]
-                 [com.amazonaws/aws-java-sdk-s3 "1.9.39" :exclusions [joda-time]]])
+                 [com.amazonaws/aws-java-sdk-s3 "1.11.215"]])
