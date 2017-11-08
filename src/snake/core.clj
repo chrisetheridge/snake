@@ -1,10 +1,20 @@
 (ns snake.core
   (:require [clojure.java.io :as io]
             [clojure.string :as string])
-  (:import [com.amazonaws.auth BasicAWSCredentials InstanceProfileCredentialsProvider]
+  (:import [com.amazonaws.auth
+            BasicAWSCredentials
+            InstanceProfileCredentialsProvider]
            com.amazonaws.services.s3.AmazonS3Client
-           [com.amazonaws.services.s3.model CannedAccessControlList ListObjectsRequest ObjectMetadata PutObjectRequest]
-           [java.io ByteArrayInputStream File FileInputStream InputStream]))
+           [com.amazonaws.services.s3.model
+            CannedAccessControlList
+            ListObjectsRequest
+            ObjectMetadata
+            PutObjectRequest]
+           [java.io
+            ByteArrayInputStream
+            File
+            FileInputStream
+            InputStream]))
 
 (def *s3-creds
   (atom {:access-key nil
@@ -135,13 +145,15 @@
     "svg"   "image/svg+xml"
     "css"   "text/css"
     "jpg"   "image/jpeg"
+    "pdf"   "application/pdf"
     "html"  "text/html"
     "jpe"   "image/jpeg"
     "jpeg"  "image/jpeg"
     "png"   "image/png"
     "gif"   "image/gif"
     "txt"   "text/css"
-    nil))
+    ;; default to binary/octet-stream
+    "binary/octet-stream"))
 
 (defn generate-metadata
   "Generates a metadata map, given the filename and data."
@@ -175,11 +187,32 @@
    `java.io.InputStream`, `java.io.File`, and `String` is supported as values.
 
    For supported content types, look at `filename->content-type`."
-  [bucket key content-type file]
+  [bucket key file]
   (let [input   (->put-value file)
         meta    (doto (ObjectMetadata.)
                   (.setCacheControl (str "public, max-age " (* 60 60 24 31)))
+                  (.setContentLength (.available input)))
+        request (PutObjectRequest. bucket key input meta)]
+    (.setCannedAcl request CannedAccessControlList/PublicRead)
+    (.putObject (s3-client) request)))
+
+(defn put-object-with-content-type
+  "Puts an object into a bucket.
+
+   Required args:
+   bucket       = destination bucket for the object
+   key          = key for the resulting object
+   content-type = content type of the resulting file
+   file         = the file to put
+
+   `java.io.InputStream`, `java.io.File`, and `String` is supported as values.
+
+   For supported content types, look at `filename->content-type`."
+  [bucket key content-type file]
+  (let [input   (->put-value file)
+        meta    (doto (ObjectMetadata.)
                   (.setContentType content-type)
+                  (.setCacheControl (str "public, max-age " (* 60 60 24 31)))
                   (.setContentLength (.available input)))
         request (PutObjectRequest. bucket key input meta)]
     (.setCannedAcl request CannedAccessControlList/PublicRead)
@@ -192,9 +225,11 @@
    bucket = bucket the key is in.
    key    = the key of the object."
   (-> (s3-client)
-      (.getObject bucket key)
-      (.getObjectContent)
-      (slurp)))
+      (.getObject bucket key)))
+
+(defn get-object-content [bucket key]
+  (when-let [object (get-object bucket key)]
+    (.getObjectContent object)))
 
 (defn get-object-input-stream [bucket key]
   "Gets an object's input stream by bucket and key.
@@ -220,11 +255,10 @@
 
    Returns the resulting filename."
   [bucket filename file & {:as options}]
-  (let [content-type (filename->content-type filename)
-        filename     (if (and options (:overwrite? options))
-                       filename
-                       (unique-key bucket filename))]
-    (put-object bucket filename content-type file)
+  (let [filename (if (and options (:overwrite? options))
+                   filename
+                   (unique-key bucket filename))]
+    (put-object bucket filename file)
     filename))
 
 (defn download-folder

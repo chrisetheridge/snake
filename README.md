@@ -19,7 +19,7 @@ A simple library to access Amazon S3 from Clojure.
 
 First, add `snake` to your `project.clj`:
 
-`[snake "0.6.9"]`
+`[snake "0.7.0"]`
 
 `snake`, by default, tries to use the **instance profiles** set in `~/.aws/credentials`. However, if you have setup snake already with `snake/setup!`, then `snake` will use these details instead.
 
@@ -30,7 +30,7 @@ You can read more about instance profiles [here](http://docs.aws.amazon.com/IAM/
 Copy one object from a source bucket to a destination bucket. By default, if a second bucket is not given, then `snake` will just copy to the source bucket.
 
 ```clj
-  (snake/copy src-bucket src-key dest-bucket dest-key)  
+  (snake/copy src-bucket src-key dest-bucket dest-key)
 ```
 
 ### Uploading files
@@ -41,10 +41,16 @@ Upload a file to a bucket (basic way). `snake` will infer the content type of th
   (snake/upload! bucket filename file)
 ```
 
-To have more control, you can do the following. This allows you to specify the content type of the file.
+`upload!` calls `put-object`, which is also public.
 
 ```clj
-  (snake/put-object bucket filename content-type file)
+(snake/put-object bucket key file)
+```
+
+To specify the content type of the file:
+
+```clj
+  (snake/put-object-with-content-type bucket filename content-type file)
 ```
 
 If you would like to get the content type of the file, you can do the following.
