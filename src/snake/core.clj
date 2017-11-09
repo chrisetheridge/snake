@@ -181,12 +181,9 @@
    Required args:
    bucket       = destination bucket for the object
    key          = key for the resulting object
-   content-type = content type of the resulting file
    file         = the file to put
 
-   `java.io.InputStream`, `java.io.File`, and `String` is supported as values.
-
-   For supported content types, look at `filename->content-type`."
+   `java.io.InputStream`, `java.io.File`, and `String` is supported as values."
   [bucket key file]
   (let [input   (->put-value file)
         meta    (doto (ObjectMetadata.)
@@ -207,7 +204,7 @@
 
    `java.io.InputStream`, `java.io.File`, and `String` is supported as values.
 
-   For supported content types, look at `filename->content-type`."
+   For supported content types, look at `snake.core/filename->content-type`."
   [bucket key content-type file]
   (let [input   (->put-value file)
         meta    (doto (ObjectMetadata.)

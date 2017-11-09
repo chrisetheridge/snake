@@ -1,5 +1,10 @@
 # Change Log
 
+## [0.7.1]
+
+- Fixed up the doc strings on `upload!` and `put-object-with-content-type`.
+-
+
 ## [0.7.0] [ BREAKING! ]
 
 - Removed `content-type` argument from from `put-object!`. The AWS SDK can handle the content type of the uploaded file. It is better to rely on their implementation, than use our own implementation.
