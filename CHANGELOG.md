@@ -7,10 +7,10 @@
 
 ## [0.7.0] [ BREAKING! ]
 
-- Removed `content-type` argument from from `put-object!`. The AWS SDK can handle the content type of the uploaded file. It is better to rely on their implementation, than use our own implementation.
+- [BREAKING] Removed `content-type` argument from from `put-object!`. The AWS SDK can handle the content type of the uploaded file. It is better to rely on their implementation, than use our own implementation.
 - `upload!` arguments remaind unchanged, but it no longer generates and sets the content type of the uploaded file.
 - `put-object-with-content-type` has been added if you need the ability to specify the type.
-- `get-object` no longer longer gets the `ObjectContent`.
+- [BREAKING] `get-object` no longer longer gets the `ObjectContent`.
 - `get-object-content` has been added to get an object, and then the content of the object.
 
 ## [0.6.9]

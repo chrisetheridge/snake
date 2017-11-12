@@ -30,7 +30,7 @@ You can read more about instance profiles [here](http://docs.aws.amazon.com/IAM/
 Copy one object from a source bucket to a destination bucket. By default, if a second bucket is not given, then `snake` will just copy to the source bucket.
 
 ```clj
-  (snake/copy src-bucket src-key dest-bucket dest-key)
+(snake/copy src-bucket src-key dest-bucket dest-key)
 ```
 
 ### Uploading files
@@ -38,7 +38,7 @@ Copy one object from a source bucket to a destination bucket. By default, if a s
 Upload a file to a bucket (basic way). `snake` will infer the content type of the file, when using the basic way of uploading files.
 
 ```clj
-  (snake/upload! bucket filename file)
+(snake/upload! bucket filename file)
 ```
 
 `upload!` calls `put-object`, which is also public.
@@ -50,13 +50,13 @@ Upload a file to a bucket (basic way). `snake` will infer the content type of th
 To specify the content type of the file:
 
 ```clj
-  (snake/put-object-with-content-type bucket filename content-type file)
+(snake/put-object-with-content-type bucket filename content-type file)
 ```
 
 If you would like to get the content type of the file, you can do the following.
 
 ```clj
-  (snake/filename->content-type filename)
+(snake/filename->content-type filename)
 ```
 
 ### Miscellaneous
@@ -64,19 +64,19 @@ If you would like to get the content type of the file, you can do the following.
 Listing objects.
 
 ```clj
-  (snake/list-objects bucket {:prefix "foo" :delimeter "foo-bar/"})
+(snake/list-objects bucket {:prefix "foo" :delimeter "foo-bar/"})
 ```
 
 Return a unique name for a filename.
 
 ```clj
-  (snake/unique-key filename)
+(snake/unique-key filename)
 ```
 
 Get the URL for a bucket and filename.
 
 ```clj
-  (snake/url-for-bucket-and-key bucket file)
+(snake/url-for-bucket-and-key bucket file)
 ```
 
 ## License
