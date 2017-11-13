@@ -1,5 +1,9 @@
 # Change Log
 
+## [0.7.3]
+
+- Fix `filename->content-type` function.
+
 ## [0.7.1]
 
 - Fixed up the doc strings on `upload!` and `put-object-with-content-type`.

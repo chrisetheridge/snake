@@ -19,7 +19,7 @@ A simple library to access Amazon S3 from Clojure.
 
 First, add `snake` to your `project.clj`:
 
-`[snake "0.7.1"]`
+`[snake "0.7.3"]`
 
 `snake`, by default, tries to use the **instance profiles** set in `~/.aws/credentials`. However, if you have setup snake already with `snake/setup!`, then `snake` will use these details instead.
 

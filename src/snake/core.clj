@@ -137,21 +137,24 @@
 
    Required args:
    key = filename of the file."
-  (case (->> key string/lower-case (re-matches #".*\.(.+)$") last)
-    "woff"  "application/font-woff"
-    "woff2" "application/font-woff2"
-    "ttf"   "application/x-font-ttf"
-    "eot"   "application/vnd.ms-fontobject"
-    "svg"   "image/svg+xml"
-    "css"   "text/css"
-    "jpg"   "image/jpeg"
-    "pdf"   "application/pdf"
-    "html"  "text/html"
-    "jpe"   "image/jpeg"
-    "jpeg"  "image/jpeg"
-    "png"   "image/png"
-    "gif"   "image/gif"
-    "txt"   "text/css"
+  (case (->> key
+             string/lower-case
+             (re-seq  #"\.\w{3,4}")
+             first)
+    ".woff"  "application/font-woff"
+    ".woff2" "application/font-woff2"
+    ".ttf"   "application/x-font-ttf"
+    ".eot"   "application/vnd.ms-fontobject"
+    ".svg"   "image/svg+xml"
+    ".css"   "text/css"
+    ".jpg"   "image/jpeg"
+    ".pdf"   "application/pdf"
+    ".html"  "text/html"
+    ".jpe"   "image/jpeg"
+    ".jpeg"  "image/jpeg"
+    ".png"   "image/png"
+    ".gif"   "image/gif"
+    ".txt"   "text/css"
     ;; default to binary/octet-stream
     "binary/octet-stream"))
 
