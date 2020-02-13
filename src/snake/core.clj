@@ -218,6 +218,24 @@
     (.setCannedAcl request CannedAccessControlList/PublicRead)
     (.putObject (s3-client) request)))
 
+(defn put-object-no-public-read
+  "Puts an object into a bucket.
+   WITHOUT the ACL for public read.
+   Buckets need to be configured correctly.
+   Required args:
+   bucket       = destination bucket for the object
+   key          = key for the resulting object
+   file         = the file to put
+
+   `java.io.InputStream`, `java.io.File`, and `String` is supported as values."
+  [bucket key file]
+  (let [input   (->put-value file)
+        meta    (doto (ObjectMetadata.)
+                  (.setCacheControl (str "public, max-age " (* 60 60 24 31)))
+                  (.setContentLength (.available input)))
+        request (PutObjectRequest. bucket key input meta)]
+    (.putObject (s3-client) request)))
+
 (defn get-object [bucket key]
   "Gets an object by bucket and key.
 
